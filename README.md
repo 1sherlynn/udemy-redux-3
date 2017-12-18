@@ -78,25 +78,154 @@ _________________________________________________________
 
 - Name of the path we create **does not need to match the component name**
 - Route: '/' == 'myblog.com/', will show a list of blogposts 
-- **<Route path='/' component={PostsIndex} />**
-- Route: '/posts/5' == 'myblog.com/posts/5', will show a particular blog post (post 5). 
+```javascript
+<Route path='/' component={PostsIndex} />
+```
+- Route: '/posts/5' == 'myblog.com/posts/5', will show a particular blog post (post 5)
 - **:id** is like a wildcard which matches and accepts any number 
-- **<Route path='/posts/:id' component={PostsShow} />**
+```javascript
+<Route path='/posts/:id' component={PostsShow} />
+```
 - Route: '/posts/new' == 'myblog.com/posts/new', will show a path to create a new blog post
-- **<Route path='/posts/new' component={PostsNew} />**
+```javascript
+<Route path='/posts/new' component={PostsNew} />
+```
 
 _________________________________________________________
 
 ### Our First Route Definition 
 
-- 
+- src/components/posts_index.js: 
+```javascript
+import React, { Component } from 'react'; 
+ 
+class PostsIndex extends Component {
+	render() {
+		return (
+			<div> 
+			  Posts Index
+			</div>
+			); 
+	}
+}
+
+export default PostsIndex; 
+```
+
+- src/index.js:
+```javascript
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { Provider } from 'react-redux';
+import { createStore, applyMiddleware } from 'redux';
+import { BrowserRouter, Route } from 'react-router-dom'; 
+//Browser interacts with the history library, tells react router to look at the entire URL and decides what components to show on screen 
+//Route provides the configuration to React Router 
+
+import reducers from './reducers';
+import PostsIndex from './components/posts_index'; 
+
+const createStoreWithMiddleware = applyMiddleware()(createStore);
 
 
+ReactDOM.render(
+  <Provider store={createStoreWithMiddleware(reducers)}>
+    <BrowserRouter>
+    	<div>
+    		<Route path="/" component={PostsIndex} />
+    	</div>
+    </BrowserRouter>
+  </Provider>
+  , document.querySelector('.container'));
+```
+
+_________________________________________________________
+
+### State as an Object 
+
+- **URL** is a **critical piece** of application state
+- URL is not any different from any other piece of state
+- In the show page, the **:id** is providing the state information 
+- Hence, we don't need a 'activePost' piece of state 
+- Previously, **Key**: posts and Type: **array** 
+- We change it to: Type: **object** to make it easier to find a particular post
+- If we use an array, we need a for-loop or find array helper
+- By changing **type** to an **object**, it makes the lookup process easier 
 
 
+- key: post :id 
+- value: the post itself 
+- **state.posts[postId]**
+
+_________________________________________________________
+
+### Back to Redux - Index Action 
+
+- 1st **action creator** would be to fetch a list of posts and serve them up to our PostsIndex component
+- **$ npm install --save axios redux-promise**
+- src/actions/index.js: 
+```javascript
+import axios from 'axios'; 
+
+export const FETCH_POSTS = 'fetch_posts'; 
+
+const ROOT_URL = 'http://reduxblog.herokuapp.com/api'
+const API_KEY = '?key=PAPERCLIP43215'; 
+//create a unique api key. Cannot be any string, use after "?key="
+
+export function fetchPosts() {
+	const request = axios.get(`${ROOT_URL}/posts${API_KEY}`); 
+	//we want to 'get' from reduxblog API
+
+	return {
+		type: FETCH_POSTS, 
+		payload: request
+		// redux-promise will resolve this request for us 
+	}; 
+}
+```
+_________________________________________________________
+
+### Implementing Posts Reducer 
+
+- When we first make the request, will have an empty array as we have not added any posts
+
+- Goal in the reducer: store/produce the post piece of state
+- Reducer: to return an object that contains the **id** of every post as the **key** and the **value** with be the actual post itself 
+- However, the API which we are working with returns a list of posts in an **array** and hence we have to do a transformation for it to be an object 
 
 
+- Solution: Lodash mapKeys method. Example: 
+```javascript
+const posts = [
+  { id: 1, title: "Hi"}, 
+  { id: 2, title: "Bye"}, 
+  { id: 3, title: "How is it going"}
+]; 
 
+const state = _.mapKeys(posts, "id")
+state["1"]
+```
+
+- src/reducers/reducer_posts.js: 
+```javascript
+import _ from 'lodash'; 
+import { FETCH_POSTS } from '../actions'; 
+
+export default function(state, action) {
+	switch (action.type) {
+	case FETCH_POSTS: 
+		return _.mapKeys(action.payload.data, 'id'); 
+		// console.log(action.payload.data); // [post1, post2] but we need to transform it to object 
+	default: 
+		return state; 
+	}
+}
+```
+
+_________________________________________________________
+
+### Action Creator Shortcuts 
 
 
 
