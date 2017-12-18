@@ -228,6 +228,49 @@ _________________________________________________________
 ### Action Creator Shortcuts 
 
 
+- Previously, we created our **fetchPosts** action creator as well as our reducer_posts reducer
+- Now to wire up the **fetchPosts action** creator to the posts_index component 
+- src/components/posts_index.js: 
+```javascript
+import React, { Component } from 'react'; 
+import { connect } from 'react-redux'; 
+import { fetchPosts } from '../actions'; 
+ 
+class PostsIndex extends Component {
+	componentDidMount() {
+		this.props.fetchPosts(); 
+	}
+
+	render() {
+		return (
+			<div> 
+			  Posts Index
+			</div>
+			); 
+	}
+}
+
+export default connect(null, { fetchPosts })(PostsIndex); 
+//this is ES6 shortcut 
+
+//when are we going to fetch the blogposts? 
+// the instant we know the user is going to the url, we want to display the list of blog posts
+// to do so, we will use React's lifecycle methods
+```
+
+- A **lifecycle method** is a **function** on a React component class that is **automatically** called by React 
+- We will use **componentDidMount()**
+- This function wil be automatically called by React **immediately after this component has showed up in the DOM**
+- Makes it a perfect location to go and fetch some data or initiate some one time loading procedure whenever this component shows up on the page 
+- Fetching our data is an asynchronous operation
+- React does not have any concept of figuring out how to not render the componet until we do some pre-loading configuration 
+- React is always going to eagerly load itself as soon as it can 
+
+- Test it out, go to browser, then in the dev tools, go to **Network**, XHR requests (ajax requests), and will see a request, go to **preview** and we see an empty array (no blog posts added yet to this particular API key)
+
+_________________________________________________________
+
+### Rendering a List of Posts 
 
 
 
