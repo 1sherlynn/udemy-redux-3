@@ -1,7 +1,7 @@
 import _ from 'lodash'; 
-import { FETCH_POSTS } from '../actions'; 
+import { FETCH_POSTS } from '../actions'; //don't need to specify after actions cause we are import form the index.js file 
 
-export default function(state, action) {
+export default function(state = {}, action) {
 	switch (action.type) {
 	case FETCH_POSTS: 
 		return _.mapKeys(action.payload.data, 'id'); 

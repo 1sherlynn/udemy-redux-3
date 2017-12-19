@@ -272,7 +272,230 @@ _________________________________________________________
 
 ### Rendering a List of Posts 
 
+- Use **Postman** to manually create a list of posts 
+- Set as **POST** and url: **http://reduxblog.herokuapp.com/api/posts?key=PAPERCLIP43215**
+- Go to **body** tab and add in content 
+- Make sure we have **raw** selected and **JSON** as the format and click **send**
+- Now when we go back to localhost:8080 when we check the network tab/XHR we should be able to see the post we just created 
+- Now to hook that component and render it to the browser 
+- When we need to consume anything from application level state, we always define our **mapStateToProps** function 
+- src/components/posts_index.js: 
 
+```javascript
+import React, { Component } from 'react'; 
+import { connect } from 'react-redux'; 
+import { fetchPosts } from '../actions'; 
+ 
+class PostsIndex extends Component {
+	componentDidMount() {
+		this.props.fetchPosts(); 
+	}
+
+	render() { 
+		console.log(this.props.posts); 
+		return (
+			<div> 
+			  Posts Index
+			</div>
+			); 
+	}
+}
+
+function mapStateToProps(state) {
+	return { posts: state.posts }; 
+}
+
+export default connect(mapStateToProps, { fetchPosts })(PostsIndex); 
+```
+- Added **console.log(this.props.posts)** to test which the list of blog posts is able to be printed 
+- Observed that there are 2 objects being printed. 1 empty object and the other containing our posts 
+- When we first rendered the component,our after the component is rendered one time do we call our action creator to go and fetch our list of posts 
+- So everything renders one time without any posts being available 
+- After the AJAX request is complete, our action creator finishes, the **promise resolves**, our state is **recalculated** and our component re-renders with the **repopulated props of posts** 
+- Hence we see the **two** console logs 
+
+
+- src/components/posts_index.js: 
+```javascript
+import _ from 'lodash'; 
+import React, { Component } from 'react'; 
+import { connect } from 'react-redux'; 
+import { fetchPosts } from '../actions'; 
+ 
+class PostsIndex extends Component {
+	componentDidMount() {
+		this.props.fetchPosts(); 
+	}
+
+	renderPosts() {
+		return _.map(this.props.posts, post => {
+			return (
+				<li className="list-group-item" key={post.id}>
+					{post.title}
+				</li>
+				); 
+		}); 
+		//objects are not able to use the map function like what we do with arrays and hence we will use lodash's map function
+	}
+
+	render() { 
+		return (
+			<div> 
+			  <h3>Posts</h3>
+			  <ul className="list-group">
+			  	{this.renderPosts()} 
+			  </ul> 
+			</div>
+			); 
+	}
+}
+
+function mapStateToProps(state) {
+	return { posts: state.posts }; 
+}
+
+export default connect(mapStateToProps, { fetchPosts })(PostsIndex); 
+//this is ES6 shortcut 
+```
+
+_________________________________________________________
+
+### Creating New Posts 
+
+- Route: '/posts/new'
+1) Scaffold 'PostsNew' component 
+2) Add route configuration 
+3) Add navigation between Index and New
+4) Add form to PostsNew
+5) Make action creator to save post 
+
+- So: 
+1) Scaffold 'PostsNew' component in **src/components/posts_new.js**: 
+```javascript 
+import React, { Component } from 'react'; 
+
+class PostsNew extends Component {
+	render() {
+		return ()
+		<div>
+			PostsNew!
+		</div>
+		); 
+	}
+}
+
+export default PostsNew; 
+```
+2) Add route configuration in the top level **src/index.js**: 
+```javascript
+import PostsNew from './components/posts_new'; 
+<Route path="/posts/new" component={PostsNew} />
+```
+_________________________________________________________
+
+### A React Router Gotcha
+
+- After refreshing the page, we see a **bug**: **BOTH** Posts index and Posts new are shown on the same screen 
+- **This is the bug that was left in on purpose**
+- Reason for bug: when we specify a path property on the route, its a loose match 
+- E.g. **path='/'** will also match "/posts/new" because there is a "/" present 
+- Hence we need to use the **Switch** component 
+- The **Switch** component takes in a collection of different routes 
+- So in practice we nest a couple of routes within the switch component, e.g.: 
+```javascript 
+<Switch>
+	<Route path="/" component={PostsIndex} />
+	<Route path="/posts/new" component={PostsNew} />
+</Switch>
+```
+- **Switch** will look at all the routes inside of it and chooses to only match the **first route** that matches the current URL 
+- So we have to put our most specify routes at the top of the list e.g. 
+
+```javascript 
+<Switch>
+	<Route path="/posts/new" component={PostsNew} />
+	<Route path="/" component={PostsIndex} />
+</Switch>
+```
+- So while '/' matches the URL, "/posts/new" matches as well and hence will be rendered first 
+
+
+_________________________________________________________
+
+### Navigation with the Link Component
+
+- For classic websites, we use the anchor tag to navigate between **distinct HTML documents**
+- When we use React Router, we are not going to use anchor tags anymore 
+- When we navigate around in a React application, what we really want to do is to tell React to show a new set of components 
+- We don't really want the Browswer to go and fetch another HTML document from the server 
+- So in practice to do navigation with React Router we end up using a component provided by React Router itself 
+- src/components/posts_index.js: 
+```javascript 
+import { Link } from 'react-router-dom'; 
+```
+- Think of **Link** as being nearly identical to the classic **anchor tag** 
+- Usage: 
+```javascript
+<Link className="btn btn-primary" to="/posts/new">
+	Add a Post 
+</Link>
+```
+#### What's the difference between using an anchor tag versus a Link tag (since it becomes an anchor tag eventually)?
+- When you click on a link tag, there are a couple of **event handlers** on it that prevent the browser from doing what it normally does (which is to navigate or to issue another HTTP request to fetch another HTML document from the server)
+- Prevents some of the **default behaviour** around the anchor tag
+
+
+_________________________________________________________
+
+### Redux Form 
+
+- Usage of **redux-form** 
+- Go to Redux Form getting started guide for installation instructions 
+- $ npm install --save redux-form@6.6.3
+- Essentially what we have to do is to **import a reducer** from the Redux form library and hook it up to our **combineReducers** call 
+- So internally, Redux form uses our redux instance or our instance of the redux store for handling all the state that is being produced by the form, like the actual form that is being rendered on the screen 
+- **At the end of the day, what Redux-form is doing for us is to saving us from having to wire up a bunch of manual action creators**
+- src/reducers/index.js: 
+```javascript
+import { combineReducers } from 'redux';
+import { reducer as formReducer } from 'redux-form'; //use of 'as' to set formReducer alias
+import PostsReducer from './reducer_posts'; 
+
+const rootReducer = combineReducers({
+	posts: PostsReducer,
+	form: formReducer 
+
+});
+
+export default rootReducer;
+```
+
+_________________________________________________________
+
+### Setting Up Redux Form
+
+1) Identify different pieces of form state (e.g. name, title)
+2) Make one 'Field' component per piece of state with type input 
+3) User changes a 'Field' Input 
+4) Redux form automatically handles changes 
+5) User submits form 
+6) We validate inputs and handle form submittal 
+
+- src/components/posts_new.js: 
+
+```javascript
+import { Field, reduxForm } from 'redux-form'; //reduxForm is similar to the connect helper from react-redux
+...
+export default reduxForm({
+	form: 'PostsNewForm' //unique (must) string to ensure that if we are showing multiple different forms at the same time, 
+	//redux forms will handle it correctly (will not merge state and etc)
+	//like how we use the connect function to connect to the redux store 
+})(PostsNew); 
+```
+
+_________________________________________________________
+
+### The Field Component 
 
 
 
