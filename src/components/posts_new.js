@@ -3,6 +3,10 @@ import { Link } from 'react-router-dom';
 import { Field, reduxForm } from 'redux-form'; //reduxForm is similar to the connect helper from react-redux
 
 class PostsNew extends Component {
+	renderTitleField(field) {
+		
+	}
+
 	render() {
 		return (
 		<div>
@@ -14,16 +18,17 @@ class PostsNew extends Component {
 			<form>
 				<Field
 				name="title"
-				component={}
+				component={this.renderTitleField} 
 				/>
-			<form/>
+			</form>
 		</div>
-		); 
+		)
 	}
 }
 
 export default reduxForm({
 	form: 'PostsNewForm' //unique (must) string to ensure that if we are showing multiple different forms at the same time, 
 	//redux forms will handle it correctly (will not merge state and etc)
+	//like how we use the connect function to connect to the redux store 
 })(PostsNew); 
-//like how we use the connect function to connect to the redux store 
+

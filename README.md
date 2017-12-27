@@ -497,6 +497,33 @@ _________________________________________________________
 
 ### The Field Component 
 
+- Field component **does not know how to show itself on the screen**, only knows how to interact with Redux Form 
+
+- Hence the purpose of the component={} is to control how the field appears on the screen
+- It is a **function** that returns some JSX
+```javascript 
+<form>
+<Field
+name="title"
+component={} 
+/>
+<form/>
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
