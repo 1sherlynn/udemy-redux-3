@@ -513,7 +513,7 @@ component={}
 - **component={}** property is supposed to be a function that returns some amount of JSX
 
 ```javascript 
-	renderTitleField(field) {
+renderTitleField(field) {
 		
 	}
 ... 
@@ -605,13 +605,92 @@ export default reduxForm({
 
 _________________________________________________________
 
-### Validating and Submitting Forms 
+### Validating Forms 
 
 - Validation of our form is what **Redux Form** handles automatically for us 
 - So we don't need to inspect any values or add any custom JSX per se
 - We just need to **hook it** to the **Redux form system validation**
 - We first start by defining a **helper function** underneath the component: 
-- We then pass that helper function to **reduxForm()**
+- We then pass that helper function to **reduxForm()**: 
+```javascript 
+function validate() {
+	// console.log(values) -> { title: 'hi', categories: 'hi', content: 'hi'}
+}
+
+export default reduxForm({
+	validate, //same as writing 'validate: validate'
+	form: 'PostsNewForm'
+})(PostsNew); 
+
+```
+- The **validate** funciton will be called automatically for us at certain points during the form's life cycle, most notably when the user tries to **submit** the form 
+- The validate function is given a single argument which by convention is referred to as **values** 
+- **Values** is an **object** that contains all the different values that the **user** has entered into the form 
+- So if we console.log(values) we should get all the properties and matching values, e.g.: 
+```javascript 
+function validate() {
+	// console.log(values) -> { title: 'hi', categories: 'hi', content: 'hi'}
+}
+```
+
+- In order to validate these inputs and then communicate any possible errors to **Redux Form**, we have to return an **object** that we create from the validate function 
+
+- Start from with creating an **errors** object : 
+```javascript
+function validate() {
+	// console.log(values) -> { title: 'hi', categories: 'hi', content: 'hi'}
+	const errors = {}; 
+
+	// Validate the inputs from the 'values'
+
+	return errors; 
+}
+```
+- Where do we actually communicate validation errors back to redux form?
+- Its all through the **errors** object (above) 
+- If we return an empty object from the validate function, the form is fine to submit 
+- **Summary**: 
+- To do validation of forms managed by **Redux Form**, we define the **errors** object, we inspect our **(values)** object, and then if there is anything wrong with our form, we **append some properties** to the errors object 
+
+```javascript
+function validate(values) {
+	// console.log(values) -> { title: 'hi', categories: 'hi', content: 'hi'}
+	const errors = {}; 
+
+	// Validate the inputs from the 'values'
+	if (!values.title.length < 3) {
+		errors.title = "Title must be at least 3 characters long!"; 
+	}
+	if (!values.title) {
+		errors.title = "Enter a title!"; 
+	}
+	if (!values.categories) {
+		errors.categories = "Enter some categories!"; 
+	}
+		if (!values.content) {
+		errors.content = "Enter some content please!"; 
+	}
+
+	// If errors is empty, the form is fine to submit 
+	// If errors has *any* properties, redux form assumes form is invalid 
+
+	return errors; 
+}
+
+export default reduxForm({
+	validate, //same as writing 'validate: validate'
+	form: 'PostsNewForm' 
+})(PostsNew); 
+```
+
+_________________________________________________________
+
+### Showing Errors to Users 
+
+
+
+
+
 
 
 

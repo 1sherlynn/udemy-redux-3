@@ -52,8 +52,28 @@ class PostsNew extends Component {
 	}
 }
 
-function validate() {
+function validate(values) {
+	// console.log(values) -> { title: 'hi', categories: 'hi', content: 'hi'}
+	const errors = {}; 
 
+	// Validate the inputs from the 'values'
+	if (!values.title.length < 3) {
+		errors.title = "Title must be at least 3 characters long!"; 
+	}
+	if (!values.title) {
+		errors.title = "Enter a title!"; 
+	}
+	if (!values.categories) {
+		errors.categories = "Enter some categories!"; 
+	}
+		if (!values.content) {
+		errors.content = "Enter some content please!"; 
+	}
+
+	// If errors is empty, the form is fine to submit 
+	// If errors has *any* properties, redux form assumes form is invalid 
+
+	return errors; 
 }
 
 export default reduxForm({
@@ -62,4 +82,19 @@ export default reduxForm({
 	//redux forms will handle it correctly (will not merge state and etc)
 	//like how we use the connect function to connect to the redux store 
 })(PostsNew); 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
