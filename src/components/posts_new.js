@@ -3,10 +3,12 @@ import { Link } from 'react-router-dom';
 import { Field, reduxForm } from 'redux-form'; //reduxForm is similar to the connect helper from react-redux
 
 class PostsNew extends Component {
-	renderTitleField(field) {
+	renderField(field) {
 		return (
-		<div>
+		<div className="form-group">
+			<label>{field.label}</label>
 			<input 
+				className="form-control"
 				type="text"
 				{...field.input} //this is the same as the below: 
 				// onChange={field.input.onChange}
@@ -28,8 +30,21 @@ class PostsNew extends Component {
 		<h3>Add a New Post</h3>
 			<form>
 				<Field
+				label="Title for Post"
 				name="title"
-				component={this.renderTitleField} 
+				//we have a label and name field cause at times they can be very different 
+				//e.g. label="Title for a Post", whereas name is short and sweet 
+				component={this.renderField} 
+				/>
+				<Field
+				label="Categories"
+				name="categories"
+				component={this.renderField} 
+				/>
+				<Field
+				label="Post Content"
+				name="content"
+				component={this.renderField} 
 				/>
 			</form>
 		</div>
@@ -37,7 +52,12 @@ class PostsNew extends Component {
 	}
 }
 
+function validate() {
+
+}
+
 export default reduxForm({
+	validate, //same as writing 'validate: validate'
 	form: 'PostsNewForm' //unique (must) string to ensure that if we are showing multiple different forms at the same time, 
 	//redux forms will handle it correctly (will not merge state and etc)
 	//like how we use the connect function to connect to the redux store 

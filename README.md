@@ -520,8 +520,8 @@ component={}
 component={this.renderTitleField} 
 ```
 - However we do still have to wire up the JSX that we are adding in renderTitleField() to the **Field** component 
-- To help us do that, renderTitleField() will have an argument that by convention is called **field** 
-- **field** contains event handlers so that **Field** component knows that it has to respond 
+- To help us do that, **renderTitleField()** will have an argument that by convention is called **(field)** 
+- **(field)** contains event handlers so that **Field** component knows that it has to respond 
 
 ```javascript 
 renderTitleField(field) {
@@ -538,14 +538,80 @@ renderTitleField(field) {
 	); 
 }
 ```
+
 _________________________________________________________
 
 ### Generalizing Fields 
 
 
+- When we have many **Field** instances for our form, instead of creating functions for each one of them, we can DRY up our code and use a single function if the **Field** is of the same type (eg. type="text")
 
+```javascript
+import React, { Component } from 'react'; 
+import { Link } from 'react-router-dom'; 
+import { Field, reduxForm } from 'redux-form'; //reduxForm is similar to the connect helper from react-redux
 
+class PostsNew extends Component {
+renderField(field) {
+	return (
+	<div className="form-group">
+		<label>{field.label}</label>
+		<input 
+			className="form-control"
+			type="text"
+			{...field.input} //this is the same as the below: 
+			// onChange={field.input.onChange}
+			// onFocus={field.input.onFocus}
+			// onBlur={field.input.onBlur}
+		/> 
+	</div>
+	); 
+}
 
+render() {
+	return (
+	<div>
+	<h3>Add a New Post</h3>
+		<form>
+			<Field
+			label="Title for Post"
+			name="title"
+			//we have a label and name field cause at times they can be very different 
+			//e.g. label="Title for a Post", whereas name is short and sweet 
+			component={this.renderField} 
+			/>
+			<Field
+			label="Categories"
+			name="categories"
+			component={this.renderField} 
+			/>
+			<Field
+			label="Post Content"
+			name="content"
+			component={this.renderField} 
+			/>
+		</form>
+	</div>
+	)
+  }
+}
+
+export default reduxForm({
+	form: 'PostsNewForm' //unique (must) string to ensure that if we are showing multiple different forms at the same time, 
+	//redux forms will handle it correctly (will not merge state and etc)
+	//like how we use the connect function to connect to the redux store 
+})(PostsNew); 
+```
+
+_________________________________________________________
+
+### Validating and Submitting Forms 
+
+- Validation of our form is what **Redux Form** handles automatically for us 
+- So we don't need to inspect any values or add any custom JSX per se
+- We just need to **hook it** to the **Redux form system validation**
+- We first start by defining a **helper function** underneath the component 
+- 
 
 
 
