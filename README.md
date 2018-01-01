@@ -375,7 +375,7 @@ _________________________________________________________
 import React, { Component } from 'react'; 
 
 class PostsNew extends Component {
-	render() {
+  render() {
 		return ()
 		<div>
 			PostsNew!
@@ -526,15 +526,15 @@ component={this.renderTitleField}
 ```javascript 
 renderTitleField(field) {
 	return (
-	<div>
-		<input 
-			type="text"
-			{...field.input} //this is the same as the below: 
-			// onChange={field.input.onChange}
-			// onFocus={field.input.onFocus}
-			// onBlur={field.input.onBlur}
-		/> 
-	</div>
+<div>
+<input 
+	type="text"
+	{...field.input} //this is the same as the below: 
+	// onChange={field.input.onChange}
+	// onFocus={field.input.onFocus}
+	// onBlur={field.input.onBlur}
+/> 
+</div>
 	); 
 }
 ```
@@ -553,18 +553,18 @@ import { Field, reduxForm } from 'redux-form'; //reduxForm is similar to the con
 
 class PostsNew extends Component {
 renderField(field) {
-	return (
-	<div className="form-group">
-		<label>{field.label}</label>
-		<input 
-			className="form-control"
-			type="text"
-			{...field.input} //this is the same as the below: 
-			// onChange={field.input.onChange}
-			// onFocus={field.input.onFocus}
-			// onBlur={field.input.onBlur}
-		/> 
-	</div>
+return (
+<div className="form-group">
+	<label>{field.label}</label>
+	<input 
+		className="form-control"
+		type="text"
+		{...field.input} //this is the same as the below: 
+		// onChange={field.input.onChange}
+		// onFocus={field.input.onFocus}
+		// onBlur={field.input.onBlur}
+	/> 
+</div>
 	); 
 }
 
