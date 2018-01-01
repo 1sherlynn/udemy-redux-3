@@ -569,28 +569,28 @@ renderField(field) {
 }
 
 render() {
-	return (
+  return (
 	<div>
 	<h3>Add a New Post</h3>
-		<form>
-			<Field
-			label="Title for Post"
-			name="title"
-			//we have a label and name field cause at times they can be very different 
-			//e.g. label="Title for a Post", whereas name is short and sweet 
-			component={this.renderField} 
-			/>
-			<Field
-			label="Categories"
-			name="categories"
-			component={this.renderField} 
-			/>
-			<Field
-			label="Post Content"
-			name="content"
-			component={this.renderField} 
-			/>
-		</form>
+	<form>
+		<Field
+		label="Title for Post"
+		name="title"
+		//we have a label and name field cause at times they can be very different 
+		//e.g. label="Title for a Post", whereas name is short and sweet 
+		component={this.renderField} 
+		/>
+		<Field
+		label="Categories"
+		name="categories"
+		component={this.renderField} 
+		/>
+		<Field
+		label="Post Content"
+		name="content"
+		component={this.renderField} 
+		/>
+	</form>
 	</div>
 	)
   }
@@ -610,8 +610,8 @@ _________________________________________________________
 - Validation of our form is what **Redux Form** handles automatically for us 
 - So we don't need to inspect any values or add any custom JSX per se
 - We just need to **hook it** to the **Redux form system validation**
-- We first start by defining a **helper function** underneath the component 
-- 
+- We first start by defining a **helper function** underneath the component: 
+- We then pass that helper function to **reduxForm()**
 
 
 
