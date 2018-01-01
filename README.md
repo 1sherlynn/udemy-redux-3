@@ -263,7 +263,7 @@ export default connect(null, { fetchPosts })(PostsIndex);
 - This function wil be automatically called by React **immediately after this component has showed up in the DOM**
 - Makes it a perfect location to go and fetch some data or initiate some one time loading procedure whenever this component shows up on the page 
 - Fetching our data is an asynchronous operation
-- React does not have any concept of figuring out how to not render the componet until we do some pre-loading configuration 
+- React does not have any concept of figuring out how to not render the component until we do some pre-loading configuration 
 - React is always going to eagerly load itself as soon as it can 
 
 - Test it out, go to browser, then in the dev tools, go to **Network**, XHR requests (ajax requests), and will see a request, go to **preview** and we see an empty array (no blog posts added yet to this particular API key)
@@ -309,9 +309,9 @@ export default connect(mapStateToProps, { fetchPosts })(PostsIndex);
 ```
 - Added **console.log(this.props.posts)** to test which the list of blog posts is able to be printed 
 - Observed that there are 2 objects being printed. 1 empty object and the other containing our posts 
-- When we first rendered the component,our after the component is rendered one time do we call our action creator to go and fetch our list of posts 
+- When we first rendered the component, only after the component is rendered one time then do we call our action creator to go and fetch our list of posts 
 - So everything renders one time without any posts being available 
-- After the AJAX request is complete, our action creator finishes, the **promise resolves**, our state is **recalculated** and our component re-renders with the **repopulated props of posts** 
+- After the AJAX request is complete, our action creator finishes, the **promise resolves**, our state is then **recalculated** and our component re-renders with the **repopulated props of posts** 
 - Hence we see the **two** console logs 
 
 
@@ -363,11 +363,11 @@ _________________________________________________________
 ### Creating New Posts 
 
 - Route: '/posts/new'
-1) Scaffold 'PostsNew' component 
+1) Scaffold **'PostsNew'** component 
 2) Add route configuration 
-3) Add navigation between Index and New
-4) Add form to PostsNew
-5) Make action creator to save post 
+3) Add **navigation** between Index and New
+4) Add **form** to PostsNew
+5) Make action creator to **save** post 
 
 - So: 
 1) Scaffold 'PostsNew' component in **src/components/posts_new.js**: 
@@ -498,7 +498,7 @@ _________________________________________________________
 ### The Field Component 
 
 - Field component **does not know how to show itself on the screen**, only knows how to interact with Redux Form 
-
+- Does not know how to returnany JSX to show that Field on the screen; hence we need the component={} prop which we have to define 
 - Hence the purpose of the component={} is to control how the field appears on the screen
 - It is a **function** that returns some JSX
 ```javascript 
@@ -510,8 +510,37 @@ component={}
 <form/>
 ```
 
+- **component={}** property is supposed to be a function that returns some amount of JSX
 
+```javascript 
+	renderTitleField(field) {
+		
+	}
+... 
+component={this.renderTitleField} 
+```
+- However we do still have to wire up the JSX that we are adding in renderTitleField() to the **Field** component 
+- To help us do that, renderTitleField() will have an argument that by convention is called **field** 
+- **field** contains event handlers so that **Field** component knows that it has to respond 
 
+```javascript 
+renderTitleField(field) {
+	return (
+	<div>
+		<input 
+			type="text"
+			{...field.input} //this is the same as the below: 
+			// onChange={field.input.onChange}
+			// onFocus={field.input.onFocus}
+			// onBlur={field.input.onBlur}
+		/> 
+	</div>
+	); 
+}
+```
+_________________________________________________________
+
+### Generalizing Fields 
 
 
 

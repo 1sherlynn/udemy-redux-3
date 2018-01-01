@@ -4,7 +4,17 @@ import { Field, reduxForm } from 'redux-form'; //reduxForm is similar to the con
 
 class PostsNew extends Component {
 	renderTitleField(field) {
-		
+		return (
+		<div>
+			<input 
+				type="text"
+				{...field.input} //this is the same as the below: 
+				// onChange={field.input.onChange}
+				// onFocus={field.input.onFocus}
+				// onBlur={field.input.onBlur}
+			/> 
+		</div>
+		); 
 	}
 
 	render() {
@@ -15,6 +25,7 @@ class PostsNew extends Component {
 				Back to Home
 			</Link>
 		</div>
+		<h3>Add a New Post</h3>
 			<form>
 				<Field
 				name="title"
