@@ -1,6 +1,9 @@
 import React, { Component } from 'react'; 
 import { Link } from 'react-router-dom'; 
 import { Field, reduxForm } from 'redux-form'; //reduxForm is similar to the connect helper from react-redux
+import { connect } from 'react-redux'; 
+import { createPost } from '../actions'; 
+
 
 class PostsNew extends Component {
 	renderField(field) {
@@ -25,19 +28,13 @@ class PostsNew extends Component {
 	}
 
 	onSubmit(values) {
-		// this === component
-		console.log(values); 
+		this.props.createPost(values); 
 	}
 
 	render() {
 		const { handleSubmit } = this.props; //property given when we connect reduxForm (below) 
 		return (
 		<div>
-		<div className="text-xs-right">
-			<Link className="btn btn-success" to="/">
-				Back to Home
-			</Link>
-		</div>
 		<h3>Add a New Post</h3>
 			<form onSubmit={handleSubmit(this.onSubmit.bind(this))} > 
 				<Field
@@ -58,6 +55,7 @@ class PostsNew extends Component {
 				component={this.renderField} 
 				/>
 				<button type="submit" className="btn btn-primary">Submit</button>
+				<Link className="btn btn-danger" to="/">Cancel</Link>
 			</form>
 		</div>
 		)
@@ -91,7 +89,9 @@ export default reduxForm({
 	form: 'PostsNewForm' //unique (must) string to ensure that if we are showing multiple different forms at the same time, 
 	//redux forms will handle it correctly (will not merge state and etc)
 	//like how we use the connect function to connect to the redux store 
-})(PostsNew); 
+})(
+	connect(null, { createPost })(PostsNew)
+); 
 
 
 

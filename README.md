@@ -744,7 +744,7 @@ _________________________________________________________
 
 - **Pristine** state: no input has touched it yet and the user has not yet selected it 
 - **Touched** property: user has selected or focused an input and then focus out of that input (done some work and considered complete)
-- **invalid**: validation failed, error message to show to user 
+- **Invalid**: validation failed, error message to show to user 
 
 
 - We want to show the error messages only **after the user has touched the field**
@@ -794,9 +794,43 @@ renderField(field) {
 
 _________________________________________________________
 
-### More on Navigation 
+### Create Post Action Creator 
 
+- Whenever we think about saving data or making API requests of any type inside our Redux App, we always want to be thinking about **Action Creators** 
+- Inside of **onSubmit** function, we have to call an action creator 
+- That action creator will be responsible for posting our post to the API
+- src/actions/index.js: 
+```javascript
+export function createPost(values) {
+	const request = axios.post(`${ROOT_URL}/posts${API_KEY}`, values); 
+	//url as the first argument and the second argument is the object or data to be sent to be the remote API 
+	return {
+		type: CREATE_POST, 
+		payload: request
+	}; 
+}
+```
+- src/components/posts_new.js: 
+```javascript
+import { connect } from 'react-redux'; 
+import { createPost } from '../actions'; 
+```
 
+- How do we combine connect() helper when reduxForm() already exists?
+- Solution: layering up 
+
+```javascript
+export default reduxForm({
+	validate, 
+	form: 'PostsNewForm'
+})(
+	connect(null, { createPost })(PostsNew)
+); 
+```
+- Trying it out in the browser, under console: Network, XHR Requests, we will see 2 requests
+- Looking at the first request (under Headers), the **Request Method: OPTIONS** 
+- **OPTIONS** type request is used whenever we are making **cross origin resource sharing CORS** aka AJAX request from locahost to a completely different domain of herokuapp.com 
+- CORS is a security feature that is present inside of User's browser to prevent malicious type code to from making requests to other domains
 
 
 
