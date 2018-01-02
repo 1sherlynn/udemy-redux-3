@@ -4,8 +4,10 @@ import { Field, reduxForm } from 'redux-form'; //reduxForm is similar to the con
 
 class PostsNew extends Component {
 	renderField(field) {
+		const { meta: { touched, error } } = field; //nested destructuring 
+		const className=`form-group ${touched && error ? 'has-danger': ''}`
 		return (
-		<div className="form-group">
+		<div className={className}>
 			<label>{field.label}</label>
 			<input 
 				className="form-control"
@@ -15,11 +17,20 @@ class PostsNew extends Component {
 				// onFocus={field.input.onFocus}
 				// onBlur={field.input.onBlur}
 			/> 
+			<div className="text-help">
+				{touched ? error: '' }
+			</div>
 		</div>
 		); 
 	}
 
+	onSubmit(values) {
+		// this === component
+		console.log(values); 
+	}
+
 	render() {
+		const { handleSubmit } = this.props; //property given when we connect reduxForm (below) 
 		return (
 		<div>
 		<div className="text-xs-right">
@@ -28,7 +39,7 @@ class PostsNew extends Component {
 			</Link>
 		</div>
 		<h3>Add a New Post</h3>
-			<form>
+			<form onSubmit={handleSubmit(this.onSubmit.bind(this))} > 
 				<Field
 				label="Title for Post"
 				name="title"
@@ -46,6 +57,7 @@ class PostsNew extends Component {
 				name="content"
 				component={this.renderField} 
 				/>
+				<button type="submit" className="btn btn-primary">Submit</button>
 			</form>
 		</div>
 		)
@@ -57,12 +69,10 @@ function validate(values) {
 	const errors = {}; 
 
 	// Validate the inputs from the 'values'
-	if (!values.title.length < 3) {
-		errors.title = "Title must be at least 3 characters long!"; 
-	}
 	if (!values.title) {
 		errors.title = "Enter a title!"; 
 	}
+
 	if (!values.categories) {
 		errors.categories = "Enter some categories!"; 
 	}

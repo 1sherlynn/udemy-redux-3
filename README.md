@@ -687,20 +687,114 @@ _________________________________________________________
 
 ### Showing Errors to Users 
 
+- use of **{field.meta.error}** :
+
+```javascript
+renderField(field) {
+return (
+<div className="form-group">
+	<label>{field.label}</label>
+	<input 
+		className="form-control"
+		type="text"
+		{...field.input} //this is the same as the below: 
+	/> 
+	{field.meta.error}
+</div>
+); 
+}
+```
+_________________________________________________________
+
+### Handling Form Submittal 
+
+- Adding a button with **type=Submit** 
+```javascript
+<button type="submit" className="btn btn-primary">Submit</button>
+```
+
+- Add the below: 
+
+```javascript
+onSubmit(values) {
+	console.log(values); 
+}
+render() {
+	const { handleSubmit } = this.props; 
+	return (
+
+<form onSubmit={handleSubmit(this.onSubmit.bind(this))} > 
+```
+- When we wire up the **reduxForm** helper, it adds a ton of additional properties that are passed to our component
+- So we can reference **this.props* and pull off the **handleSubmit** property 
+- **handleSubmit**: this is a property that is being passed to the component on behalf of reduxForm 
+- **handleSubmit** will run the redux form side of things to check validity. Once that is done, it will go ahead and call the callback: **this.onSubmit** 
+- **this.onSubmit.bind(this)**: we need to **bind.this** because we are calling **this.onSubmit** as a callback function that will be executed in some different context outside of our component
+- So to make sure that we still have access to the correct **this** of essentially our **component**, we have to **bind(this)** 
+
+_________________________________________________________
+
+### Form and Field States 
+
+- 3 different states of our form that we need to be aware of for each and every field that we create: 
+1) Pristine 
+2) Touched 
+3) Invalid 
 
 
+- **Pristine** state: no input has touched it yet and the user has not yet selected it 
+- **Touched** property: user has selected or focused an input and then focus out of that input (done some work and considered complete)
+- **invalid**: validation failed, error message to show to user 
 
 
+- We want to show the error messages only **after the user has touched the field**
+- To do so, we add a ternary expression: 
 
+```javascript 
+{field.meta.touched ? field.meta.error: '' }
+```
+- So if **touched** is truthy (user focused on field and moved away), the expression resolves with showing the **error**, else it displays an empty string 
 
+_________________________________________________________
 
+### Conditional Styling 
 
+- To get the errors to show up as **red** instead of black, we will make use of built-in css included in Bootstrap 
 
+```javascript
+renderField(field) {
+return (
+<div className="form-group has-danger">
+	...
+	<div className="text-help">
+		{field.meta.touched ? field.meta.error: '' }
+	</div>
+</div>
+); 
+	}
+```
 
+- **className="has-danger"** works with **className="text-help"** to show the field and text as red in colour 
+- We only want to apply the **has-danger** className when the user has BOTH **touched** the field and when the input is **invalid**: 
 
+```javascript
+renderField(field) {
+	const { meta: { touched, error } } = field; //nested destructuring for field.meta.touched && field.meta.error
+	const className=`form-group ${touched && error ? 'has-danger': ''}`
+	return (
+	<div className={className}>
+		...
+		<div className="text-help">
+			{touched ? error: '' }
+		</div>
+	</div>
+	); 
+}
+```
 
+_________________________________________________________
 
-
+### More on Navigation 
 
 
 
